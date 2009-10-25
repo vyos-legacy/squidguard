@@ -1,3 +1,11 @@
+squidguard (1.4.0+vyatta+1) unstable; urgency=low
+
+  * Merge 1.4. upstream
+  * Apply patch-20091015
+  * Apply patch-20091019	
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 25 Oct 2009 13:03:15 -0700
+
 squidguard (1.2.0-8.4) unstable; urgency=low
 
   * Non-maintainer upload to fix pending l10n issues.

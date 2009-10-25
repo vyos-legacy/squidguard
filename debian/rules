@@ -33,7 +33,7 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install prefix=$(CURDIR)/debian/squidguard
+	$(MAKE) install prefix=$(CURDIR)/debian/squidguard/usr
 	install -D -m 644 debian/override \
 		debian/squidguard/usr/share/lintian/overrides/squidguard
 
@@ -59,7 +59,11 @@ binary-arch: build install
 	dh_perl
 	dh_installdeb
 	dh_shlibdeps
-	dh_gencontrol
+	if [ -f "../.VYATTA_DEV_BUILD" ]; then \
+		dh_gencontrol -a -- -v999.dev; \
+	else                                   \
+		dh_gencontrol -a;              \
+	fi
 	dh_md5sums
 	dh_builddeb
 

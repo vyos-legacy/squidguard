@@ -43,7 +43,7 @@ test::
 # Dependencies for installing
 #	
 
-install:	install-build install-conf
+install:	install-build
 
 install-conf:
 	@echo Installing configuration file  ;

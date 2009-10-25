@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+2) unstable; urgency=low
+
+  * Fix bindir for squidGuard
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sun, 25 Oct 2009 16:25:15 -0700
+
 squidguard (1.4.0+vyatta+1) unstable; urgency=low
 
   * Merge 1.4. upstream

@@ -4,6 +4,8 @@
   
   This software product, squidGuard, is copyrighted (C) 1998 by
   ElTele Øst AS, Oslo, Norway, with all rights reserved.
+  With December 27th 2006 all rights moved to Christine Kronberg,
+  Shalla Secure Services.
   
   This program is free software; you can redistribute it and/or modify it
   under the terms of the GNU General Public License (version 2) as
@@ -23,6 +25,8 @@
 extern int globalUpdate;
 extern char *globalCreateDb;
 extern char **globalArgv;
+extern int globalQuiet;
+extern int showBar;     /* from main.c */
 
 #if __STDC__
 void sgDbInit(struct sgDb *Db, char *file)
@@ -74,13 +78,8 @@ void sgDbInit(Db, file)
   /*please feel free to experiment with cacesize and pagesize */
   //Db->dbp->set_cachesize(Db->dbp, 0, 1024 * 1024,0);
   //Db->dbp->set_pagesize(Db->dbp, 1024);
-#ifdef DB_VERSION_GT4
   if(Db->type == SGDBTYPE_DOMAINLIST)
-    Db->dbp->set_bt_compare(Db->dbp, (int *) domainCompare);
-#else
-  if(Db->type == SGDBTYPE_DOMAINLIST)
-    Db->dbp->set_bt_compare(Db->dbp, (int *) domainCompare);
-#endif
+    Db->dbp->set_bt_compare(Db->dbp, (void *) domainCompare);
 #endif
 #if DB_VERSION_MAJOR == 2
   if(globalUpdate || createdb || stat(dbfile,&st)){
@@ -97,36 +96,39 @@ void sgDbInit(Db, file)
       sgLogFatalError("Error db_open: %s", strerror(errno));
     }
   }
-#else
+#endif
+#if DB_VERSION_MAJOR == 3
   if(globalUpdate || createdb || (dbfile != NULL && stat(dbfile,&st))){
     flag = DB_CREATE;
     if(createdb)
       flag = flag | DB_TRUNCATE;
-#ifdef DB_VERSION_GT4
-    if ((ret = 
-	 Db->dbp->open(Db->dbp, NULL, dbfile, NULL, DB_BTREE, flag, 0664)) != 0) {
-      (void) Db->dbp->close(Db->dbp, 0);
-      sgLogFatalError("Error db_open: %s", strerror(ret));
-    }
-#else
     if ((ret = 
 	 Db->dbp->open(Db->dbp, dbfile, NULL, DB_BTREE, flag, 0664)) != 0) {
       (void) Db->dbp->close(Db->dbp, 0);
       sgLogFatalError("Error db_open: %s", strerror(ret));
     }
-#endif
   } else {
-#ifdef DB_VERSION_GT4
-    if ((ret = 
-	 Db->dbp->open(Db->dbp, NULL, dbfile, NULL, DB_BTREE, DB_CREATE, 0664)) != 0) {
-      sgLogFatalError("Error db_open: %s", strerror(ret));
-    }
-#else
     if ((ret = 
 	 Db->dbp->open(Db->dbp, dbfile, NULL, DB_BTREE, DB_CREATE, 0664)) != 0) {
       sgLogFatalError("Error db_open: %s", strerror(ret));
     }
+  }
 #endif
+#if DB_VERSION_MAJOR == 4
+  if(globalUpdate || createdb || (dbfile != NULL && stat(dbfile,&st))){
+    flag = DB_CREATE;
+    if(createdb)
+      flag = flag | DB_TRUNCATE;
+    if ((ret =
+         Db->dbp->open(Db->dbp, NULL, dbfile, NULL, DB_BTREE, flag, 0664)) != 0) {
+      (void) Db->dbp->close(Db->dbp, 0);
+      sgLogFatalError("Error db_open: %s", strerror(ret));
+    }
+  } else {
+    if ((ret =
+         Db->dbp->open(Db->dbp, NULL, dbfile, NULL, DB_BTREE, DB_CREATE, 0664)) != 0) {
+      sgLogFatalError("Error db_open: %s", strerror(ret));
+    }
   }
 #endif
   if(file != NULL){
@@ -171,10 +173,11 @@ void sgDbInit(Db, file)
   	  sgDbLoadTextFile(Db,update,1);
         }
         (void)Db->dbp->sync(Db->dbp,0);
-        sgFree(dbfile);
       }
     }
   }
+  if(dbfile != NULL)
+    sgFree(dbfile);
 }
 
 #if __STDC__
@@ -276,13 +279,86 @@ int defined(Db, request, retval)
   }
   if(result == 1)
     if(retval != NULL && Db->data.size > 1){
-      strncpy(dbdata,Db->data.data,Db->data.size);
+      if(Db->data.size >= sizeof(dbdata))
+        sgLogFatalError("Data size too large in defined()");
+      memcpy(dbdata,Db->data.data,Db->data.size);
       *(dbdata + Db->data.size) = '\0';
       *retval = dbdata;
     } 
   memset(&Db->data, 0, sizeof(Db->data));
   (void)Db->dbcp->c_close(Db->dbcp);
   return result;
+}
+
+static int stdoutisatty;
+
+#if __STDC__
+void startProgressBar()
+#else
+void startProgressBar()
+#endif
+{
+  stdoutisatty = isatty(STDOUT_FILENO);
+
+  if(1 == stdoutisatty)
+  {
+    /* do nothing */
+  }
+  else
+  {
+    printf("    [");
+    fflush(stderr);
+  }
+  return;
+}
+
+#if __STDC__
+void finishProgressBar()
+#else
+void finishProgressBar()
+#endif
+{
+  if(1 == stdoutisatty)
+  {
+    printf("\n");
+  }
+  else
+  {
+    printf("] 100 %% done\n");
+  }
+  fflush(stderr);
+  return;
+}
+
+#if __STDC__
+void updateProgressBar(float prog)
+#else
+void updateProgressBar(prog)
+	float prog;
+#endif
+{
+  if(1 == stdoutisatty)
+  {
+    int j,k=0;
+    k = (int)(prog * 50.0);
+    printf("\r");fflush(stderr);
+    printf("    [");
+    for(j=0; j<50; j++)
+    {
+      if(j <= k)
+        printf("=");
+      else
+        printf(" ");
+    }
+    printf("] %d %% done", (int)(prog*100.0));fflush(stderr);
+  }
+  else
+  {
+    if(((int)(prog*100.0) % 100) == 0)
+      printf(".");fflush(stderr);
+  }
+
+  return;
 }
 
 #if __STDC__
@@ -298,14 +374,36 @@ void sgDbLoadTextFile(Db, filename, update)
   char *key,*val,*p,line[MAX_BUF];
   char *k, nkey[MAX_BUF + 1];
   FILE *fp;
-  int entries = 0, add = 0, deleted = 0;
+  int entries = 0, added = 0, add = 0, deleted = 0;
+  size_t fpsz;
+  size_t lnsz = 0;
+  struct stat fpst;
+  
   dbp = Db->dbp;
   if ((fp = fopen(filename, "r")) == NULL) {
     sgLogFatalError("%s: %s", filename, strerror(errno));
   }
+  else {
+    if ( showBar == 1 ) {
+    printf("Processing file and database %s\n", filename);
+    }
+  }
+
+  fstat(fileno(fp), &fpst);
+  fpsz = fpst.st_size;
+  if ( showBar == 1 ) {
+    startProgressBar();
+  }
+  
   memset(&Db->key, 0, sizeof(DBT));
   memset(&Db->data, 0, sizeof(DBT));
   while(fgets(line, sizeof(line), fp) != NULL){
+
+    lnsz += strlen(line);
+    if ( showBar == 1 ) {
+    updateProgressBar((float)lnsz/(float)fpsz);
+    }
+    
     if(*line == '#')
       continue;
     p = strchr(line,'\n');
@@ -360,12 +458,14 @@ void sgDbLoadTextFile(Db, filename, update)
     if(update && !add){
       errno = dbp->del(dbp, NULL, &Db->key, 0);
       deleted++;
+      entries--;
     } else {
       switch (errno=dbp->put(dbp, NULL, &Db->key, &Db->data, 0)) {
       case 0:
-	entries++;
-	break;
+	added++;
+	/*FALLTHROUGH*/
       case DB_KEYEXIST:
+        entries++;
 	break;
       default:
 	sgLogFatalError("sgDbLoadTextFile: put: %s", strerror(errno));
@@ -374,7 +474,10 @@ void sgDbLoadTextFile(Db, filename, update)
     } 
   }
   if(update){
-    sgLogError("update: added %d entries, deleted %d entries",entries,deleted);
+    sgLogError("update: added %d entries, deleted %d entries",added,deleted);
+  }
+  if ( showBar == 1 ) {
+    finishProgressBar();
   }
   Db->entries = entries;
   fclose(fp);
@@ -382,24 +485,37 @@ void sgDbLoadTextFile(Db, filename, update)
 
 
 #if __STDC__
-void sgDbUpdate(struct sgDb *Db, char *key)
+void sgDbUpdate(struct sgDb *Db, char *key, char *value, size_t len)
 #else
-void sgDbUpdate(Db, key)
+void sgDbUpdate(Db, key, value, len)
      struct sgDb *Db;
      char *key;
+     char *value;
+     int len;
 #endif
 {
   DB *dbp ;
+  u_int32_t flags = DB_NOOVERWRITE;
   char key_buf[MAX_BUF];
+  char value_buf[MAX_BUF];
   dbp = Db->dbp;
   memset(&Db->key, 0, sizeof(DBT));
   memset(&Db->data, 0, sizeof(DBT));
   strcpy(key_buf,key);
   Db->key.data = key_buf;
   Db->key.size = strlen(key) ;
-  Db->data.data = "default";
-  Db->data.size = 8 ;
-  switch (errno = dbp->put(dbp, NULL, &Db->key, &Db->data, DB_NOOVERWRITE)) {
+  if(value == NULL){
+    Db->data.data = "default";
+    Db->data.size = 8 ;
+  } else {
+    if(len > sizeof(value_buf))
+      sgLogFatalError("Buffer too large in sgDbUpdate()");
+    memcpy(value_buf,value, len);
+    Db->data.data = value_buf;
+    Db->data.size = len ;
+    flags = 0;
+  }
+  switch (errno = dbp->put(dbp, NULL, &Db->key, &Db->data, flags)) {
   case 0:
     break;
   case DB_KEYEXIST:

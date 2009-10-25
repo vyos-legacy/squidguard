@@ -4,7 +4,7 @@
   <TITLE>squidGuard - Installation</TITLE>
   <META name="keywords" lang="en" content="installation,install,squidGuard,squidguard,squid,Squid,free,redirector,filter">
   <META name="author" content="Pål Baltzersen">
-  <META name="copyright" content="&copy; 2000 ElTele Øst AS.">
+  <META name="copyright" content="&copy; 2000 Tele Danmark InterNordia.">
  </HEAD>
 
  <!-- Background white, links blue (unvisited), navy (visited), red (active) -->
@@ -24,7 +24,7 @@
      <TABLE CELLPADDING=0 CELLSPACING=0 BORDER=0>
       <TR>
        <TD ALIGN=LEFT VALIGN=BOTTOM>
-	<A HREF="http://ftp.ost.eltele.no/pub/www/proxy/squidGuard/"><IMG
+	<A HREF="http://ftp.teledanmark.no/pub/www/proxy/squidGuard/"><IMG
 	SRC="/images/squidGuard.gif" BORDER=0
 	VALIGN=TOP></A>
 	<FONT SIZE=+3>
@@ -44,7 +44,10 @@
 	 HREF="/authors/">Lars Erik Håland</A>
 	 <BR>
 	 <A HREF="/copyright/">Copyright</A> &copy; 1999-2000, <A
-	 HREF="http://www.ost.eltele.no/">ElTele Øst AS</A>
+	 HREF="http://www.teledanmark.no/">Tele Danmark InterNordia</A>
+	 <BR>
+	 Visitors: <IMG SRC="/cgi-bin/counter" BORDER=0 ALIGN=TOP>
+	 (Since 2002-01-08 19:54:05)
 	</FONT>
        </TH>
       </TR>
@@ -56,7 +59,7 @@
        <TH ALIGN=RIGHT>
 	<FONT SIZE=-1>
 	 <BR>
-	 This page was last modified 2000-02-28
+	 This page was last modified 2002-01-08
 	</FONT>
        </TH>
       </TR>
@@ -179,20 +182,24 @@
       </TT>
      </DD>
     </DL>
-    *) At Eltele Øst AS we apply <A
-    HREF="http://ftp.ost.eltele.no/pub/db/db.local.diff">this little
-    patch</A> and use:
+    *) At <A HREF="http://www.teledanmark.no/">Tele Danmark</A> we
+    use:
     <DL>
      <DD>
       <TT>
-       <B>tcsh#</B>&nbsp;(setenv&nbsp;CC&nbsp;"gcc";setenv&nbsp;CFLAGS&nbsp;"-O3&nbsp;-Wall";\<BR>
-       ./configure&nbsp;--verbose&nbsp;--target=sparc-sun-solaris\
-       <DL>
-	<DD>
-	 --prefix=/local\<BR>
-	</DD>
-       </DL>
-       )
+       <PRE>#!/bin/sh -
+   cd build_unix
+   CC=gcc \
+   CXX=g++ \
+   CFLAGS="-O3 -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" \
+   CXXFLAGS="-O3 -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" \
+   ../dist/configure \
+     --verbose \
+     --target=sparc-sun-solaris \
+     --enable-dynamic \
+     --enable-compat185 \
+     --enable-rpc \
+     --prefix=/local</PRE>
       </TT>
      </DD>
     </DL>
@@ -284,24 +291,23 @@
      </DD>
     </DL>
     <A NAME="Logdir"></A><A NAME="DBhome"></A>At <A
-    HREF="http://www.ost.eltele.no/">ElTele Øst AS</A> we build with
-    this setup:
+    HREF="http://www.teledanmark.no/">Tele Danmark</A> we use:
     <DL>
      <DD>
       <TT>
-       <B>tcsh#</B>&nbsp;(setenv&nbsp;CC&nbsp;"gcc";setenv&nbsp;CFLAGS&nbsp;"-O3&nbsp;-Wall";\<BR>
-       ./configure&nbsp;--verbose --target=sparc-sun-solaris\
-       <DL>
-	<DD>
-	 --prefix=/local/squid\<BR>
-	 --with-db-lib=/local/lib\<BR>
-	 --with-db-inc=/local/include\<BR>
-	 --with-sg-config=/var/spool/www/hosts/proxy.ost.eltele.no/filter/conf/filter.conf\<BR>
-	 --with-sg-logdir=/var/spool/www/hosts/proxy.ost.eltele.no/filter/logs\
-	 --with-sg-dbhome=/var/spool/www/hosts/proxy.ost.eltele.no/filter/db\
-	</DD>
-       </DL>
-       )
+       <PRE>#!/bin/sh -
+   CC="gcc" \
+   CFLAGS="-O3 -Wall" \
+   LIBS="-R/local/lib -lnls" \
+   ./configure \
+   --verbose \
+   --target=sparc-sun-solaris \
+   --prefix=/local/squid \
+   --with-db-lib=/local/lib \
+   --with-db-inc=/local/include \
+   --with-sg-config=/var/spool/www/hosts/proxy.teledanmark.no/filter/conf/filter.conf \
+   --with-sg-logdir=/var/spool/www/hosts/proxy.teledanmark.no/filter/logs \
+   --with-sg-dbhome=/var/spool/www/hosts/proxy.teledanmark.no/filter/db</PRE>
       </TT>
      </DD>
     </DL><BR>
@@ -374,7 +380,7 @@
     <DL>
      <DD>
       <TT>
-       http://info.ost.eltele.no/freeware/squidGuard/&nbsp;10.1.2.3/pc123.ost.eltele.no&nbsp;fdgh&nbsp;GET<BR>
+       http://freeware.teledanmark.no/squidGuard/&nbsp;10.1.2.3/pc123.teledanmark.no&nbsp;fdgh&nbsp;GET<BR>
        http://bad.site.com/dirty/stuff/foo.htm&nbsp;10.3.2.1/-&nbsp;-&nbsp;GET
       </TT>
      </DD>
@@ -529,56 +535,60 @@
    <TR>
     <TD ALIGN=CENTER>
      <A HREF="http://www.gnu.org/"><IMG
-     SRC="http://info.ost.eltele.no/icons/gnu-logo.gif" BORDER=0
+     SRC="http://info.tdcnorge.no/icons/gnu-logo.gif" BORDER=0
      VALIGN=TOP></A>
     </TD>
     <TD ALIGN=CENTER>
-     <A HREF="http://www.perl.com/pub/"><IMG
-     SRC="http://info.ost.eltele.no/icons/perl-logo.gif" BORDER=0
+     <A HREF="http://www.perl.com/"><IMG
+     SRC="http://info.tdcnorge.no/icons/perl-logo.gif" BORDER=0
      VALIGN=TOP></A>
     </TD>
+   <!--
     <TD ALIGN=CENTER>
      <A HREF="http://www.sun.com/solaris/"><IMG
-     SRC="http://info.ost.eltele.no/icons/solaris-logo.gif" BORDER=0
+     SRC="http://info.tdcnorge.no/icons/solaris-logo.gif" BORDER=0
      VALIGN=BOTTOM></A>
     </TD>
     <TD ALIGN=CENTER>
      <A HREF="http://www.sun.com/servers/"><IMG
-     SRC="http://info.ost.eltele.no/icons/sun-logo.gif" BORDER=0
+     SRC="http://info.tdcnorge.no/icons/sun-logo.gif" BORDER=0
      VALIGN=BOTTOM></A>
     </TD>
     <TD ALIGN=CENTER>
-     <A HREF="http://www.ost.eltele.no/"><IMG
-      SRC="http://info.ost.eltele.no/icons/eltele-logo.gif" BORDER=0
+     <A HREF="http://www.tdcnorge.no/"><IMG
+      SRC="http://info.tdcnorge.no/icons/tdc-medium.gif" BORDER=0
       VALIGN=BOTTOM></A>
     </TD>
+   -->
    </TR>
   </TABLE>
   <TABLE ALIGN=CENTER CELLPADDING=3 CELLSPACING=0 BORDER=0>
    <TR>
     <TD ALIGN=CENTER>
-     <A HREF="http://www.apache.org/httpd.html"><IMG
-     SRC="http://info.ost.eltele.no/icons/apache-logo.gif" BORDER=0
-     VALIGN=BOTTOM></A>
-    </TD>
-    <TD ALIGN=CENTER>
      <A HREF="http://www.squid-cache.org/"><IMG
-     SRC="http://info.ost.eltele.no/icons/squid-logo.gif" BORDER=0
+     SRC="http://info.tdcnorge.no/icons/squid-logo.gif" BORDER=0
      VALIGN=BOTTOM></A>
     </TD>
     <TD ALIGN=CENTER>
      <A HREF="http://www.squidguard.org/"><IMG
-     SRC="http://info.ost.eltele.no/freeware/squidGuard/squidGuard.gif"
+     SRC="http://www.squidguard.org/images/squidGuard.gif"
      BORDER=0 VALIGN=BOTTOM></A>
     </TD>
+   <!--
+    <TD ALIGN=CENTER>
+     <A HREF="http://freeware.tdcnorge.no/identd/"><IMG
+     SRC="http://freeware.tdcnorge.no/identd/identd.gif"
+     BORDER=0 VALIGN=BOTTOM></A>
+    </TD>
+   -->
    </TR>
   </TABLE>
   <TABLE ALIGN=CENTER CELLPADDING=3 CELLSPACING=0 BORDER=0>
    <TR>
     <TD ALIGN=CENTER>
-     <A HREF="http://info.ost.eltele.no/freeware/identd/"><IMG
-     SRC="http://info.ost.eltele.no/freeware/identd/identd.gif"
-     BORDER=0 VALIGN=BOTTOM></A>
+     <A HREF="http://www.sleepycat.com/"><IMG
+     SRC="http://www.sleepycat.com/imgs/home_header.gif" BORDER=0
+     VALIGN=TOP></A>
     </TD>
    </TR>
   </TABLE>

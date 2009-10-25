@@ -1,0 +1,21 @@
+LYNX	= @LYNX@
+RM = rm -f
+
+
+all update::
+	@echo making $@ in `basename \`pwd\``
+
+clean::
+	@echo making $@ in `basename \`pwd\``
+	$(RM) *~ *.bak core *.log *.error
+
+realclean:: clean
+	@echo making $@ in `basename \`pwd\``
+	$(RM) TAGS *.orig
+
+distclean:: realclean
+	@echo making $@ in `basename \`pwd\``
+	$(RM) Makefile
+
+install uninstall::
+	@echo making $@ in `basename \`pwd\``

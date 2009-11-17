@@ -262,6 +262,7 @@ struct Destination {
   int within;
   struct LogFile *logfile;
   struct Destination *next;
+  int    EcCategory;
 };
 
 struct Source {
@@ -352,6 +353,7 @@ void   sgDest __P((char *));
 void   sgDestEnd __P(());
 void   sgDestDomainList __P((char *));
 void   sgDestUrlList __P((char *));
+void   sgDestEcCategory __P((char *));
 void   sgDestExpressionList __P((char *, char *));
 void   sgDestRedirect __P((char *));
 void   sgDestRewrite __P((char *));
@@ -443,4 +445,5 @@ int    sgDoLdapSearch __P((const char *, const char *));
 
 int    expand_url __P((char *, size_t, const char *, const char *));
 
-
+int    ec_init __P((void));
+int    ec_url_category  __P((int, char*));

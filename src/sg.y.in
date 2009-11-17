@@ -88,7 +88,7 @@ rfc1738_unescape(char *s)
 %token WORD END START_BRACKET STOP_BRACKET WEEKDAY LDAPDNSTR
 %token DESTINATION REWRITE ACL TIME TVAL DVAL DVALCRON
 %token SOURCE CIDR IPCLASS CONTINUE
-%token IPADDR DBHOME DOMAINLIST URLLIST EXPRESSIONLIST IPLIST
+%token IPADDR DBHOME DOMAINLIST URLLIST EXPRESSIONLIST ECCATEGORY IPLIST
 %token DOMAIN USER USERLIST USERQUERY LDAPUSERSEARCH USERQUOTA IP NL NUMBER
 %token PASS REDIRECT LOGDIR SUBST CHAR MINUTELY HOURLY DAILY WEEKLY DATE
 %token WITHIN OUTSIDE ELSE LOGFILE ANONYMOUS VERBOSE CONTINIOUS SPORADIC
@@ -174,6 +174,7 @@ destination_content:
             | EXPRESSIONLIST '-' { sgDestExpressionList(NULL,NULL); }
             | EXPRESSIONLIST 'i' WORD { sgDestExpressionList($3,"i"); }
             | EXPRESSIONLIST WORD  { sgDestExpressionList($2,"n"); }
+            | ECCATEGORY NUMBER { sgDestEcCategory($2); }
             | REDIRECT WORD  {sgDestRedirect($2); }
             | REWRITE WORD  {sgDestRewrite($2); }
             | WITHIN WORD { sgDestTime($2,WITHIN); }
@@ -1146,7 +1147,7 @@ void sgDestEnd()
  struct Destination *d;
  d = lastDest;
  if(d->domainlist == NULL && d->urllist == NULL && d->expressionlist == NULL
-    && d->redirect == NULL && d->rewrite == NULL){
+    && d->redirect == NULL && d->rewrite == NULL && d->EcCategory == 0){
    sgLogError("destblock %s missing active content, set inactive",d->name);
    d->time = NULL;
    d->active = 0;
@@ -1241,6 +1242,19 @@ void sgDestUrlList(urllist)
     sgFree(sp->urllistDb);
     sp->urllistDb = NULL;
   }
+}
+
+#if __STDC__
+void sgDestEcCategory(char *value)
+#else
+void sgDestEcCategory(value)
+     char *value;
+#endif
+{
+  struct Destination *sp;
+  sp = lastDest;
+  sp->EcCategory = atoi(value);
+  ec_init();
 }
 
 #if __STDC__
@@ -2432,6 +2446,22 @@ char *sgAclAccess(src, acl, req)
       }
       if(aclpass->dest->regExp != NULL && access){
 	if((result = sgRegExpMatch(aclpass->dest->regExp,req->strippedurl)) != 0){
+	  if(aclpass->access){
+	    access++;
+	    break;
+	  } else {
+	    access = 0;
+	    break;
+	  }
+	}
+      }
+      if(aclpass->dest->EcCategory != 0){
+        if(strlen(req->furl) > 0) {
+          result = ec_url_category(aclpass->dest->EcCategory,req->furl);
+        } else {
+          sgLogError("empty orig");
+        }
+	if(result != 0){
 	  if(aclpass->access){
 	    access++;
 	    break;

@@ -115,6 +115,7 @@ ldapdn                 ({ldapnamecomponent}{ldapspacedseparator})*{ldapnamecompo
 domainlist  return DOMAINLIST;
 urllist     return URLLIST;
 expressionlist return EXPRESSIONLIST;
+eccategory  return ECCATEGORY;
 iplist      return IPLIST;
 user        return USER;
 userlist    return USERLIST;

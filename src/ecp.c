@@ -26,6 +26,7 @@
 #include "sock_util.h"
 
 #define MAX_MSG_BUF 256
+char classify_msg[MAX_MSG_BUF];    
 
 int sockfd = -1;
 
@@ -51,8 +52,6 @@ int ecp_init(char *socket_path)
    return 0;
 }
 
-char classify_msg[MAX_MSG_BUF];    
-
 int ecp_url_classify(char *buffer, ecp_results *result)
 {
    int n;
@@ -61,13 +60,22 @@ int ecp_url_classify(char *buffer, ecp_results *result)
    ecp_classify_rsp_t rsp;
 
    url_length = strlen(buffer);
+   if (url_length >= ECP_MAX_URL) {
+      return ECP_EMAXURL;
+   }
 
+   /*
+    * send command
+    */
    bzero(&cmd, sizeof(cmd));
    cmd.magic      = ECP_MAGIC;
    cmd.url_length = url_length;
    n = writen(sockfd, &cmd, sizeof(cmd));
    n = writen(sockfd, buffer, url_length);
 
+   /*
+    * block waiting for response
+    */
    bzero(&rsp, sizeof(rsp));
    n = readn(sockfd, &rsp, sizeof (rsp));
    if (n != sizeof (rsp)) {
@@ -120,6 +128,9 @@ char *ecp_errstring(int ret)
          break;
       case ECP_ECLASSIFY:
          return classify_msg;
+      case ECP_EMAXURL:
+         msg = "Error max url length exceeded";
+         break;
       default:
          msg = "Error undefined code";
          break;

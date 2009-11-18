@@ -35,9 +35,7 @@
 #include "sg.h"
 #include "ecp.h"
 
-#define MAX_URL 256
-
-char last_lookup[MAX_URL];
+char last_lookup[ECP_MAX_URL];
 int  last_result_count = -1;
 ecp_results last_result;      
 
@@ -93,7 +91,9 @@ int ec_url_category(category, lookup_url)
       sgLogError("skipping 0 len url");
       return -1;
    }
-   if (strncmp(last_lookup, lookup_url, MAX_URL-1) == 0) {
+   if (strlen(lookup_url) > ECP_MAX_URL-1) 
+      sgLogError("truncating long url %d", strlen(lookup_url));
+   if (strncmp(last_lookup, lookup_url, ECP_MAX_URL-1) == 0) {
       if (ec_debug) 
          sgLogError("cached result [%d]", last_result[0]);
       return is_category_in_result(category, last_result_count, &last_result);
@@ -101,7 +101,7 @@ int ec_url_category(category, lookup_url)
    /*
     * maybe I should strip off parameters???
     */
-   strncpy(last_lookup, lookup_url, MAX_URL-1);      
+   strncpy(last_lookup, lookup_url, ECP_MAX_URL-1);      
    result_count = ecp_url_classify(last_lookup, &result);
    if (ec_debug)
       sgLogError("ec result_count %d", result_count);

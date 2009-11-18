@@ -7,12 +7,19 @@
 #define ECP_MAGIC 0x1215
 
 /*
+ * Max URL to be passed over the socket
+ */
+#define ECP_MAX_URL      8191  
+
+/*
+ * Unix domain socket
+ */
+#define ECP_SOCKET_PATH "/var/run/ecp"
+
+/*
  * Max number of classifitions per url
  */
 #define ECP_MAX_RESULTS     5
-
-#define ECP_SOCKET_PATH "/var/run/ecp"
-
 typedef int ecp_results[ECP_MAX_RESULTS];
 
 /*
@@ -49,7 +56,7 @@ typedef struct ecp_classify_rsp_t_ {
 #define  ECP_ERSPSZ     -3
 #define  ECP_EBADMAGIC  -4
 #define  ECP_ECLASSIFY  -5
-
+#define  ECP_EMAXURL    -6
 
 /*
  * function prototypes

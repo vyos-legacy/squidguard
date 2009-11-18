@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+4) unstable; urgency=low
+
+  * Update ecp code and use common define for max url.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 18 Nov 2009 12:12:04 -0800
+
 squidguard (1.4.0+vyatta+3) unstable; urgency=low
 
   * Add support for url classification over unix domain socket.

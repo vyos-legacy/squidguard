@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+5) unstable; urgency=low
+
+  * Strip parameters of url.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 18 Nov 2009 17:42:18 -0800
+
 squidguard (1.4.0+vyatta+4) unstable; urgency=low
 
   * Update ecp code and use common define for max url.

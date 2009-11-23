@@ -1,3 +1,11 @@
+squidguard (1.4.0+vyatta+6) unstable; urgency=low
+
+  * Change socket path.
+  * Fix ecp_init return value check.
+  * Move strip_url() out of common code.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 23 Nov 2009 14:48:39 -0800
+
 squidguard (1.4.0+vyatta+5) unstable; urgency=low
 
   * Strip parameters of url.

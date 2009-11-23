@@ -34,7 +34,7 @@ int ecp_init(char *socket_path)
 {
    struct sockaddr_un serv_addr;
 
-   if (sockfd != -1)  // already been called
+   if (sockfd > 0)  // already been called
       return 0; 
 
    sockfd = socket(AF_UNIX, SOCK_STREAM, 0);

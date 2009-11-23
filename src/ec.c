@@ -52,7 +52,7 @@ void sig_pipe(int signo)
 int ec_init(void)
 {
     int ret = ecp_init(ECP_SOCKET_PATH);
-    if (ret > 0) {
+    if (ret < 0) {
        sgLogFatalError("ec_init %s\n", strerror(errno));
        exit(1);
     }

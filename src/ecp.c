@@ -52,17 +52,6 @@ int ecp_init(char *socket_path)
    return 0;
 }
 
-static
-void strip_url(char *url)
-{
-   char *p = NULL;
-
-   p = strchr(url, '?');
-   if (p) {
-      p[0] = '\0';
-   }
-}
-
 int ecp_url_classify(char *buffer, ecp_results *result)
 {
    int n;
@@ -74,7 +63,6 @@ int ecp_url_classify(char *buffer, ecp_results *result)
    if (url_length >= ECP_MAX_URL) {
       return ECP_EMAXURL;
    }
-   strip_url(buffer);
 
    /*
     * send command

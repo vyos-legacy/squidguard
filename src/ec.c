@@ -35,6 +35,10 @@
 #include "sg.h"
 #include "ecp.h"
 
+/*
+ * globals
+ */
+char tmp_lookup[ECP_MAX_URL];
 char last_lookup[ECP_MAX_URL];
 int  last_result_count = -1;
 ecp_results last_result;      
@@ -44,7 +48,7 @@ int ec_debug = 0;
 static
 void sig_pipe(int signo)
 {
-   sgLogError("caught sigpipe, exiting...");
+   sgLogError("ec caught sigpipe, exiting...");
    ecp_shutdown();
    exit(1);
 }
@@ -76,6 +80,20 @@ int is_category_in_result(int category, int result_count, ecp_results *result)
    return 0;
 }
 
+static
+void strip_url(char *url)
+{
+   char *p = NULL;
+
+   p = strchr(url, '?');
+   if (p) 
+      p[0] = '\0';
+
+   p = strchr(url, '#');
+   if (p) 
+      p[0] = '\0';
+}
+
 #if __STDC__
 int ec_url_category(int category, char *lookup_url) 
 #else
@@ -86,22 +104,39 @@ int ec_url_category(category, lookup_url)
 {	
    ecp_results result;       
    int result_count;
-   
-   if (strlen(lookup_url) == 0) {
+   int len1, len2;
+
+   if (strlen(lookup_url) > ECP_MAX_URL-1) {
+      sgLogError("truncating long url %d", strlen(lookup_url));   
+   }
+   /*
+    * Don't modify the original url.
+    */
+   strncpy(tmp_lookup, lookup_url, ECP_MAX_URL-1);                
+   len1 = strlen(tmp_lookup);
+   if (len1 == 0) {
       sgLogError("skipping 0 len url");
       return -1;
    }
-   if (strlen(lookup_url) > ECP_MAX_URL-1) 
-      sgLogError("truncating long url %d", strlen(lookup_url));
-   if (strncmp(last_lookup, lookup_url, ECP_MAX_URL-1) == 0) {
+   strip_url(tmp_lookup);
+   len2 = strlen(tmp_lookup);
+
+   if (strncmp(last_lookup, tmp_lookup, ECP_MAX_URL-1) == 0) {
       if (ec_debug) 
-         sgLogError("cached result [%d]", last_result[0]);
+         sgLogError("cache match - result [%d]", last_result[0]);
       return is_category_in_result(category, last_result_count, &last_result);
    }
+
    /*
-    * maybe I should strip off parameters???
+    * Do a new classification
     */
-   strncpy(last_lookup, lookup_url, ECP_MAX_URL-1);      
+   if (ec_debug) {
+      sgLogError("%d [%s]", len1, lookup_url);
+      if (len1 > len2)
+         sgLogError("%d [%s]", len2, tmp_lookup);
+   }
+
+   strncpy(last_lookup, tmp_lookup, ECP_MAX_URL-1);      
    result_count = ecp_url_classify(last_lookup, &result);
    if (ec_debug)
       sgLogError("ec result_count %d", result_count);

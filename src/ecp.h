@@ -14,7 +14,7 @@
 /*
  * Unix domain socket
  */
-#define ECP_SOCKET_PATH "/var/run/ecp"
+#define ECP_SOCKET_PATH "/tmp/ecp"
 
 /*
  * Max number of classifitions per url

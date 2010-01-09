@@ -146,7 +146,7 @@ int ec_url_category(category, lookup_url)
       return  is_category_in_result(category, result_count, &result);
    } else {
       char *msg = ecp_errstring(result_count);
-      sgLogError("ec classify error [%s]", msg);
+      sgLogError("ec classify error [%s] [%s]", msg, last_lookup);
       last_lookup[0] = 0;
       return -1;
    }

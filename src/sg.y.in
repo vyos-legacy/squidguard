@@ -2461,7 +2461,7 @@ char *sgAclAccess(src, acl, req)
         } else {
           sgLogError("empty orig");
         }
-	if(result != 0){
+	if(result > 0){
 	  if(aclpass->access){
 	    access++;
 	    break;
@@ -2469,7 +2469,9 @@ char *sgAclAccess(src, acl, req)
 	    access = 0;
 	    break;
 	  }
-	}
+        } else {
+          access = 0;
+        }
       }
     }
     if(!access){

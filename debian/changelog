@@ -1,3 +1,10 @@
+squidguard (1.4.0+vyatta+7) unstable; urgency=low
+
+  * Fix 5210: vyattaguard may block access if url_classification returns
+    an error
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 09 Jan 2010 14:22:28 -0800
+
 squidguard (1.4.0+vyatta+6) unstable; urgency=low
 
   * Change socket path.

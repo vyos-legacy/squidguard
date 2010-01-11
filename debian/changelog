@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+8) unstable; urgency=low
+
+  * Clean up access match for external classifier.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 11 Jan 2010 15:53:50 -0800
+
 squidguard (1.4.0+vyatta+7) unstable; urgency=low
 
   * Fix 5210: vyattaguard may block access if url_classification returns

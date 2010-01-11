@@ -2456,21 +2456,15 @@ char *sgAclAccess(src, acl, req)
 	}
       }
       if(aclpass->dest->EcCategory != 0){
-        if(strlen(req->furl) > 0) {
-          result = ec_url_category(aclpass->dest->EcCategory,req->furl);
-        } else {
-          sgLogError("empty orig");
-        }
-	if(result > 0){
-	  if(aclpass->access){
-	    access++;
-	    break;
-	  } else {
-	    access = 0;
-	    break;
-	  }
-        } else {
-          access = 0;
+        result = ec_url_category(aclpass->dest->EcCategory,req->furl);
+	if(result > 0) {
+           if (aclpass->access){
+             access++;
+	     break;
+	   } else {
+	     access = 0;
+	     break;
+           }
         }
       }
     }

@@ -17,13 +17,12 @@ fi
 
 case "$1" in
     configure)
-	if [ "$DBRELOAD" = "true" ]
-	then
-		/usr/sbin/update-squidguard
-	else
-		echo "/usr/sbin/update-squidguard not run automatically"
-		echo "Check Debconf settings for squidguard to change"
-	fi
+
+	  # previously, the code here was to update squidguard database using
+	  # /usr/sbin/update-squidguard when [ "$DBRELOAD" = "true" ]. Vyatta does 
+	  # not want to do that since database is updated using an op-mode command
+	  # For more information see http://bugzilla.vyatta.com/show_bug.cgi?id=5329
+	  
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

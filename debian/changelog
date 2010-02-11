@@ -1,3 +1,10 @@
+squidguard (1.4.0+vyatta+9) unstable; urgency=low
+
+  * Fix Bug 5329 full-upgrade from VC5 to VC6 stuck as squidguard
+    updates database
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 11 Feb 2010 15:29:51 -0800
+
 squidguard (1.4.0+vyatta+8) unstable; urgency=low
 
   * Clean up access match for external classifier.

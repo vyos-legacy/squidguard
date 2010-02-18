@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+9+kenwood1) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 17 Feb 2010 16:05:28 -0800
+
 squidguard (1.4.0+vyatta+9) unstable; urgency=low
 
   * Fix Bug 5329 full-upgrade from VC5 to VC6 stuck as squidguard

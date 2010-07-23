@@ -1,3 +1,10 @@
+squidguard (1.4.0+vyatta+11) unstable; urgency=low
+
+  [ Stephen Hemminger ]
+  * Fix debian warning about versionless GPL reference
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 17:22:27 -0700
+
 squidguard (1.4.0+vyatta+10) unstable; urgency=low
 
   * UNRELEASED

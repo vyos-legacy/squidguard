@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+12) unstable; urgency=low
+
+  * fix squeeze build issues
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 02 Sep 2010 18:27:24 -0700
+
 squidguard (1.4.0+vyatta+11) unstable; urgency=low
 
   [ Stephen Hemminger ]

@@ -126,7 +126,7 @@ char *resolve_url(char *url, char *http_str, char *rep)
   if(!(p = strstr(url, http_str)))
     return url;
 
-  // remove http_str from url and put it in buffer
+  // replace http_str with rep in url and then copy url to buffer
   strncpy(buffer, url, p-url);
   buffer[p-url] = '\0';
   sprintf(buffer+(p-url), "%s%s", rep, p+strlen(http_str));

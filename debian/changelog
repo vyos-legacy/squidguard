@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+14) unstable; urgency=low
+
+  * update comment to make more sense
+
+ -- Mohit Mehta <mohit@vyatta.com>  Fri, 10 Dec 2010 12:55:02 -0800
+
 squidguard (1.4.0+vyatta+13) unstable; urgency=low
 
   * add code to resolve IP address in URL so it makes more sense in the

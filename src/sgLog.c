@@ -17,6 +17,7 @@
 */
 
 #include "sg.h"
+#include <arpa/inet.h>
 
 extern int globalDebug;    /* from main.c */
 extern int globalPid;      /* from main.c */
@@ -111,6 +112,61 @@ void sgLogFatalError(format, va_alist)
   sgEmergency();
 }
 
+// if requested url is of form http://IP-address then try resolving IP-address
+char *resolve_url(char *url, char *http_str, char *rep)
+{
+  static char buffer[MAX_BUF];
+  char tmpbuffer[MAX_BUF];
+  char *p;
+
+  memset(buffer, '\0', sizeof(buffer));
+  memset(tmpbuffer, '\0', sizeof(tmpbuffer));
+
+  // return if http_str isn't present in url
+  if(!(p = strstr(url, http_str)))
+    return url;
+
+  // remove http_str from url and put it in buffer
+  strncpy(buffer, url, p-url);
+  buffer[p-url] = '\0';
+  sprintf(buffer+(p-url), "%s%s", rep, p+strlen(http_str));
+
+  // remove '/' at the end if any
+  p = strrchr (buffer, '/');
+  if (p != NULL)
+  {
+    if (strlen(p) == 1)
+    {
+      strncpy(tmpbuffer, buffer, strlen(buffer)-1);
+      memset(buffer, '\0', sizeof(buffer));
+      strcpy(buffer, tmpbuffer);
+    }
+  }
+
+  // if buffer is an IP address; attempt a host lookup
+  struct sockaddr_in sa;
+  int result = inet_pton(AF_INET, buffer, &(sa.sin_addr));
+  if (result == 1)
+  {
+    struct in_addr iaddr;
+    inet_aton(buffer, &iaddr);
+    struct hostent *host;
+    if((host = gethostbyaddr((const void *)&iaddr,
+               sizeof(iaddr), AF_INET)) != NULL)
+    {
+      memset(buffer, '\0', sizeof(buffer));
+      strncpy(buffer, (char *)host->h_name, sizeof(buffer));
+    }
+  }
+
+  // prepend removed http_str and append removed '/' to buffer
+  memset(tmpbuffer, '\0', sizeof(tmpbuffer));
+  strcpy(tmpbuffer, buffer);
+  memset(buffer, '\0', sizeof(buffer));
+  sprintf(buffer, "%s%s%s", http_str, tmpbuffer, "/");
+
+  return buffer;
+}
 
 #if __STDC__
 void sgLogRequest(struct LogFile *log,
@@ -175,11 +231,15 @@ void sgLogRequest(log, req, acl, aclpass, rewrite, request)
   }
   else
     targetclass =  aclpass->name;
+
+    // attempt to resolve IP address in requested URL before logging
+    char *orig = resolve_url(req->orig, "http://", "");
+
   sgLog(log->stat,"Request(%s/%s/%s) %s %s/%s %s %s %s",
 	srcclass,
 	targetclass,
 	rew,
-        req->orig,
+        orig,
        req->src,
        srcDomain,
 	ident,

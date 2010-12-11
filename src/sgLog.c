@@ -115,16 +115,16 @@ void sgLogFatalError(format, va_alist)
 // if requested url is of form http://IP-address then try resolving IP-address
 char *resolve_url(char *url, char *http_str, char *rep)
 {
-  static char buffer[MAX_BUF];
-  char tmpbuffer[MAX_BUF];
   char *p;
-
-  memset(buffer, '\0', sizeof(buffer));
-  memset(tmpbuffer, '\0', sizeof(tmpbuffer));
 
   // return if http_str isn't present in url
   if(!(p = strstr(url, http_str)))
     return url;
+
+  static char buffer[MAX_BUF];
+  char tmpbuffer[MAX_BUF];
+  memset(buffer, '\0', sizeof(buffer));
+  memset(tmpbuffer, '\0', sizeof(tmpbuffer));
 
   // replace http_str with rep in url and then copy url to buffer
   strncpy(buffer, url, p-url);

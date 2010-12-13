@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+16) unstable; urgency=low
+
+  * attmept resolving IP address in https URls only and log as 'URL:443'
+
+ -- Mohit Mehta <mohit@vyatta.com>  Mon, 13 Dec 2010 11:34:42 -0800
+
 squidguard (1.4.0+vyatta+15) unstable; urgency=low
 
   * initialize buffer strings only if initial check passes

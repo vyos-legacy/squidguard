@@ -112,13 +112,15 @@ void sgLogFatalError(format, va_alist)
   sgEmergency();
 }
 
-// if requested url is of form http://IP-address then try resolving IP-address
-char *resolve_url(char *url, char *http_str, char *rep)
+// if requested URL is of form https://IP-address then try resolving
+// IP-address. Also, append ':443' to URL before returning since squidguard
+// logs https URLs as 'URL:443' in non-transparent mode
+char *log_https(char *url, char *https_str, char *rep)
 {
   char *p;
 
-  // return if http_str isn't present in url
-  if(!(p = strstr(url, http_str)))
+  // return if https_str isn't present in url
+  if(!(p = strstr(url, https_str)))
     return url;
 
   static char buffer[MAX_BUF];
@@ -126,10 +128,10 @@ char *resolve_url(char *url, char *http_str, char *rep)
   memset(buffer, '\0', sizeof(buffer));
   memset(tmpbuffer, '\0', sizeof(tmpbuffer));
 
-  // replace http_str with rep in url and then copy url to buffer
+  // replace https_str with rep in url and then copy url to buffer
   strncpy(buffer, url, p-url);
   buffer[p-url] = '\0';
-  sprintf(buffer+(p-url), "%s%s", rep, p+strlen(http_str));
+  sprintf(buffer+(p-url), "%s%s", rep, p+strlen(https_str));
 
   // remove '/' at the end if any
   p = strrchr (buffer, '/');
@@ -159,11 +161,11 @@ char *resolve_url(char *url, char *http_str, char *rep)
     }
   }
 
-  // prepend removed http_str and append removed '/' to buffer
+  // append :443 to the end of buffer
   memset(tmpbuffer, '\0', sizeof(tmpbuffer));
   strcpy(tmpbuffer, buffer);
   memset(buffer, '\0', sizeof(buffer));
-  sprintf(buffer, "%s%s%s", http_str, tmpbuffer, "/");
+  sprintf(buffer, "%s%s", tmpbuffer, ":443");
 
   return buffer;
 }
@@ -232,8 +234,10 @@ void sgLogRequest(log, req, acl, aclpass, rewrite, request)
   else
     targetclass =  aclpass->name;
 
-    // attempt to resolve IP address in requested URL before logging
-    char *orig = resolve_url(req->orig, "http://", "");
+    // vyatta uses vyattaguard's IP based categorization to enable filtering of
+    // https URLs in transparent mode. Before logging https drops, we attempt
+    // to resolve IP addr in requested https URL and log with ':443' appended
+    char *orig = log_https(req->orig, "https://", "");
 
   sgLog(log->stat,"Request(%s/%s/%s) %s %s/%s %s %s %s",
 	srcclass,

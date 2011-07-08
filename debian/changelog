@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyatta+18) unstable; urgency=low
+
+  * new branch
+
+ -- Deepti Kulkarni <deepti@vyatta.com>  Thu, 07 Jul 2011 20:54:24 -0700
+
 squidguard (1.4.0+vyatta+17) unstable; urgency=low
 
   * new branch

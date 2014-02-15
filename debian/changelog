@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyos1+helium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 15:42:04 +0100
+
 squidguard (1.4.0+vyatta+20+hydrogen1) unstable; urgency=low
 
   * New branch

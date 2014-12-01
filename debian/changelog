@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyos2+lithium1) unstable; urgency=low
+
+  * New branch
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 01 Dec 2014 19:32:05 +0000
+ 
 squidguard (1.4.0+vyos1+helium2) unstable; urgency=low
 
   * Bug #350: enable LDAP in squidguard configure options.

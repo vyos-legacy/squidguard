@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyos2+lithium2) unstable; urgency=low
+
+  * Force release
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 15 Dec 2014 21:18:06 +0000
+ 
 squidguard (1.4.0+vyos2+lithium1) unstable; urgency=low
 
   * New branch

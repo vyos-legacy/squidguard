@@ -2,7 +2,7 @@ Source: squidguard
 Build-Depends: debhelper (>= 5), perl, libdb4.8-dev, bison, flex
 Section: web
 Priority: optional
-Maintainer: Víctor Pérez Pereira <vperez@debianvenezuela.org>
+Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
 Standards-Version: 3.6.2
 
 Package: squidguard

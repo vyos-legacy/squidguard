@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyos2+lithium3) unstable; urgency=low
+
+  * Update maintainer address
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 25 Dec 2014 10:05:43 +0000
+ 
 squidguard (1.4.0+vyos2+lithium2) unstable; urgency=low
 
   * Force release

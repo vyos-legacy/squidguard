@@ -13,7 +13,7 @@ build-stamp:
 		--with-sg-config=/etc/squid/squidGuard.conf \
 		--with-sg-logdir=/var/log/squid \
 		--with-sg-dbhome=/var/lib/squidguard/db \
-		--with-db=/usr
+		--with-db=/usr \
 		--with-ldap
 	$(MAKE)
 

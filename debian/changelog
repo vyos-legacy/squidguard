@@ -1,3 +1,12 @@
+squidguard (1.4.0+vyos2+lithium4) unstable; urgency=low
+
+  [ Igor Golubkov ]
+  * squidguard: enable LDAP in squidguard configure options
+  
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 06 Jan 2015 07:22:46 +0000
+ 
 squidguard (1.4.0+vyos2+lithium3) unstable; urgency=low
 
   * Update maintainer address

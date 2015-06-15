@@ -1,3 +1,9 @@
+squidguard (1.4.0+vyos2+lithium5) unstable; urgency=low
+
+  * squidguard: update dh_gencontrol with new development build flag
+  
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 15 Jun 2015 07:03:44 +0100
+ 
 squidguard (1.4.0+vyos2+lithium4) unstable; urgency=low
 
   [ Igor Golubkov ]
